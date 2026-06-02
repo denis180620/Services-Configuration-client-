@@ -1,0 +1,439 @@
+/* Основная страница профиля */
+.profile-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Верхняя панель - фиксированная */
+.profile-top-navbar {
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+}
+
+.profile-title h1 {
+    margin: 0;
+    font-size: 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.profile-nav-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.profile-nav-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f0f0f0;
+    color: #666;
+}
+
+.profile-nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-nav-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-icon {
+    font-size: 18px;
+}
+
+/* Основной контент - две колонки (прокручиваются вместе) */
+.profile-main-content {
+    display: flex;
+    gap: 30px;
+    padding: 30px 40px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* Левая колонка - форма */
+.profile-left-column {
+    flex: 1;
+    min-width: 400px;
+    animation: slideInLeft 0.5s ease-out;
+}
+
+.form-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Правая колонка - списки (теперь не фиксированные) */
+.profile-right-column {
+    flex: 1;
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    animation: slideInRight 0.5s ease-out;
+}
+
+/* Стили для контейнеров списков */
+.templates-container,
+.contacts-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Заголовки списков */
+.templates-header,
+.contacts-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.templates-header h3,
+.contacts-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.templates-count,
+.contacts-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* Поисковая строка */
+.search-bar {
+    padding: 15px;
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Список с прокруткой */
+.templates-list,
+.contacts-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+/* Элементы списка */
+.template-item,
+.contact-item {
+    border-bottom: 1px solid #e0e0e0;
+    background: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.template-item:hover,
+.contact-item:hover {
+    background: #f0f0ff;
+}
+
+.template-item.expanded,
+.contact-item.expanded {
+    background: #f8f0ff;
+}
+
+/* Названия */
+.template-name,
+.contact-name {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.template-icon,
+.contact-icon {
+    font-size: 20px;
+}
+
+.template-name h4,
+.contact-name h4 {
+    margin: 0;
+    flex: 1;
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+}
+
+.expand-icon {
+    font-size: 12px;
+    color: #999;
+    transition: transform 0.3s ease;
+}
+
+/* Текст шаблона */
+.template-text-wrapper {
+    padding: 0 20px 20px 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.template-text {
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.template-text p {
+    margin: 0;
+    line-height: 1.6;
+    color: #555;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Детали контакта */
+.contact-details {
+    padding: 0 20px 20px 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.detail-item {
+    margin-bottom: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.detail-item:hover {
+    background: #f0f0f0;
+    transform: translateX(5px);
+}
+
+.detail-content label {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.detail-content p {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #333;
+    word-break: break-all;
+}
+
+/* Кнопки копирования */
+.copy-btn,
+.copy-detail-btn {
+    padding: 8px 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.copy-btn:hover,
+.copy-detail-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Пустое состояние */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+}
+
+.empty-state p {
+    margin: 5px 0;
+}
+
+.empty-state p:first-child {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+/* Скроллбары */
+.templates-list::-webkit-scrollbar,
+.contacts-list::-webkit-scrollbar,
+.profile-page::-webkit-scrollbar {
+    width: 8px;
+}
+
+.templates-list::-webkit-scrollbar-track,
+.contacts-list::-webkit-scrollbar-track,
+.profile-page::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.templates-list::-webkit-scrollbar-thumb,
+.contacts-list::-webkit-scrollbar-thumb,
+.profile-page::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.5);
+    border-radius: 10px;
+}
+
+.templates-list::-webkit-scrollbar-thumb:hover,
+.contacts-list::-webkit-scrollbar-thumb:hover,
+.profile-page::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.8);
+}
+
+/* Анимации */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Адаптивность для планшетов */
+@media (max-width: 1024px) {
+    .profile-top-navbar {
+        padding: 12px 30px;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .profile-title h1 {
+        font-size: 20px;
+    }
+
+    .profile-main-content {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .profile-left-column,
+    .profile-right-column {
+        min-width: auto;
+    }
+
+    .templates-container,
+    .contacts-container {
+        max-height: 350px;
+    }
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .profile-top-navbar {
+        padding: 12px 20px;
+    }
+
+    .profile-nav-buttons {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .profile-nav-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+    }
+
+    .profile-main-content {
+        padding: 15px;
+        gap: 20px;
+    }
+
+    .templates-container,
+    .contacts-container {
+        max-height: 300px;
+    }
+
+    .template-name h4,
+    .contact-name h4 {
+        font-size: 14px;
+    }
+}

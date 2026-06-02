@@ -1,0 +1,237 @@
+/* Основной контейнер */
+.contact-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Обертка формы - слева сверху */
+.contact-form-wrapper {
+    width: 100%;
+    max-width: 650px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    animation: slideInLeft 0.5s ease-out;
+}
+
+/* Анимация появления слева */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Заголовок формы */
+.contact-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 25px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.contact-header h3 {
+    margin: 0 0 8px 0;
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.contact-header p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+}
+
+/* Тело формы */
+.contact-body {
+    padding: 30px;
+}
+
+/* Группа полей */
+.form-group {
+    margin-bottom: 25px;
+}
+
+/* Стили для label */
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+}
+
+.required {
+    color: #f44336;
+    font-weight: bold;
+}
+
+/* Стили для input */
+.form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Input с иконкой */
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    font-size: 18px;
+    z-index: 1;
+}
+
+.form-input.with-icon {
+    padding-left: 40px;
+}
+
+/* Подсказка */
+.form-hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #888;
+}
+
+/* Кнопка отправки */
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 10px;
+}
+
+.btn-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-submit:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Сообщения об ошибке */
+.alert-error {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fee;
+    border-left: 4px solid #f44336;
+    border-radius: 10px;
+    color: #d32f2f;
+    animation: fadeIn 0.3s ease;
+}
+
+.alert-error strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Сообщение об успехе */
+.alert-success {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e8f5e8;
+    border-left: 4px solid #4caf50;
+    border-radius: 10px;
+    color: #2e7d32;
+    animation: fadeIn 0.3s ease;
+}
+
+.alert-success strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Анимация появления сообщений */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .contact-container {
+        padding: 10px;
+    }
+
+    .contact-form-wrapper {
+        max-width: 100%;
+    }
+
+    .contact-header {
+        padding: 20px;
+    }
+
+    .contact-header h3 {
+        font-size: 20px;
+    }
+
+    .contact-body {
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+}
+
+/* Стили для автозаполнения браузера */
+.form-input:-webkit-autofill,
+.form-input:-webkit-autofill:hover,
+.form-input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Фокус на всей форме */
+.contact-form-wrapper:focus-within {
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+}

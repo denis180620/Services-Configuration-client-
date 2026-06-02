@@ -1,0 +1,626 @@
+/* src/App.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.main-container {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 30px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Страница требования авторизации */
+.auth-required-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 40px;
+}
+
+.auth-required-card {
+  text-align: center;
+  padding: 60px 40px;
+  background: white;
+  border-radius: 24px;
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.auth-required-card h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.auth-required-card p {
+  margin-bottom: 30px;
+  color: #666;
+}
+
+.auth-required-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: #f0f0f0;
+  color: #667eea;
+}
+
+.btn-secondary:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background: #f0f0f0;
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 20px;
+  }
+
+  .auth-required-card {
+    margin: 20px;
+    padding: 40px 24px;
+  }
+
+  .auth-required-buttons {
+    flex-direction: column;
+  }
+}
+/* src/AuthComponent/AuthPages.css */
+.auth-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /* Изменено с calc(100vh - 80px) на 100vh */
+  padding: 40px 20px;
+  position: fixed;
+  /* Добавлено для фиксации на весь экран */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: 100;
+}
+
+/* Карточка авторизации */
+.auth-card {
+  background: white;
+  border-radius: 32px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 480px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: slideUp 0.5s ease-out;
+  position: relative;
+  margin: 0 auto;
+  /* Центрирование */
+}
+
+/* Остальные стили остаются без изменений */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.3);
+}
+
+/* Заголовки */
+.auth-card h1,
+.auth-card h2 {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-card h1 {
+  font-size: 36px;
+}
+
+/* Кнопка "На главную" */
+.back-home-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #f0f0f0;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  color: #667eea;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.back-home-btn:hover {
+  background: #e0e0e0;
+  transform: translateX(-3px);
+}
+
+/* Форма */
+.form-group {
+  margin-bottom: 24px;
+  animation: fadeInUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.form-group:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.form-group:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.form-group:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.form-group:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background: white;
+  font-family: inherit;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-group input:hover {
+  border-color: #cbd5e0;
+}
+
+.form-group input::placeholder {
+  color: #a0aec0;
+  font-size: 14px;
+}
+
+/* Сообщения */
+.error-message {
+  background: linear-gradient(135deg, #f56565 0%, #ed8936 100%);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+  animation: shake 0.5s ease-out;
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.success-message {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Кнопка отправки */
+button[type="submit"] {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 12px;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+}
+
+button[type="submit"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+button[type="submit"]:hover::before {
+  left: 100%;
+}
+
+button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(102, 126, 234, 0.4);
+}
+
+button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Ссылки */
+.auth-link {
+  text-align: center;
+  margin-top: 28px;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  margin-left: 5px;
+  transition: all 0.3s ease;
+  width: auto;
+}
+
+.link-button:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* Стили для автозаполнения */
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px white inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Адаптивность */
+@media (max-width: 640px) {
+  .auth-page-container {
+    padding: 20px;
+  }
+
+  .auth-card {
+    padding: 32px 24px;
+    margin: 16px;
+  }
+
+  .auth-card h1,
+  .auth-card h2 {
+    font-size: 28px;
+    margin-bottom: 24px;
+  }
+
+  .auth-card h1 {
+    font-size: 32px;
+  }
+
+  .form-group input {
+    padding: 12px 16px;
+  }
+
+  button[type="submit"] {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 24px 20px;
+  }
+
+  .auth-card h1,
+  .auth-card h2 {
+    font-size: 24px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+}
+/* Стили для кнопок действий */
+.contact-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 20px;
+  cursor: pointer;
+  position: relative;
+}
+
+.contact-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* Кнопка удаления в строке контакта */
+.delete-contact-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-contact-btn:hover:not(:disabled) {
+  background: #fee;
+  color: #f44336;
+  transform: scale(1.1);
+}
+
+.delete-contact-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Кнопка удаления в деталях */
+.delete-section {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.delete-full-btn {
+  width: 100%;
+  padding: 10px;
+  background: #fee;
+  color: #f44336;
+  border: 1px solid #f44336;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.delete-full-btn:hover:not(:disabled) {
+  background: #f44336;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.delete-full-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+  .contact-name {
+    flex-wrap: wrap;
+  }
+
+  .contact-actions {
+    margin-left: auto;
+  }
+
+  .delete-contact-btn {
+    font-size: 16px;
+  }
+}
+/* Исправление для полей ввода - делаем текст видимым */
+.form-group input,
+.form-group input::placeholder,
+input,
+textarea,
+.search-input,
+.form-input,
+.message-textarea {
+  color: #333 !important;
+  /* Темный цвет текста */
+  background: white !important;
+}
+
+/* Стили для placeholder (подсказок) */
+.form-group input::placeholder,
+.search-input::placeholder,
+.form-input::placeholder,
+.message-textarea::placeholder {
+  color: #999 !important;
+  /* Серый цвет для подсказок */
+  opacity: 1 !important;
+}
+
+/* Для автозаполнения браузера */
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus,
+.form-group input:-webkit-autofill:active {
+  -webkit-text-fill-color: #333 !important;
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Специфичные стили для разных типов полей */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+textarea {
+  color: #333 !important;
+  background: white !important;
+}
+
+/* Для полей в карточках контактов и шаблонов */
+.form-input,
+.form-input:focus {
+  color: #333 !important;
+  background: white !important;
+}
+
+/* Для полей поиска */
+.search-input {
+  color: #333 !important;
+  background: white !important;
+}
+
+/* Для текстовой области */
+.message-textarea {
+  color: #333 !important;
+  background: white !important;
+}

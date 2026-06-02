@@ -1,0 +1,331 @@
+.templates-bottom-left {
+    position: fixed;
+    top: 200px;
+    right: 20px;
+    bottom: auto;
+    left: auto;
+
+    width: calc(50% - 30px);
+    max-width: 600px;
+    min-width: 300px;
+    z-index: 1000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    animation: slideUp 0.5s ease-out;
+}
+
+/* Анимация появления снизу */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Обертка списка шаблонов */
+.templates-wrapper {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.templates-wrapper:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Заголовок списка */
+.templates-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.templates-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Кнопка обновления */
+.refresh-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.refresh-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Контентная область */
+.templates-content {
+    max-height: 400px;
+    overflow-y: auto;
+    background: #f8f9fa;
+}
+
+/* Состояние загрузки */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #666;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e0e0e0;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Состояние ошибки */
+.error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #f44336;
+    text-align: center;
+}
+
+.retry-btn {
+    margin-top: 15px;
+    padding: 8px 20px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.retry-btn:hover {
+    background: #764ba2;
+    transform: scale(1.05);
+}
+
+/* Пустое состояние */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #999;
+    text-align: center;
+}
+
+.empty-state p:first-child {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.empty-state p:last-child {
+    font-size: 14px;
+}
+
+/* Список шаблонов */
+.templates-list {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Элемент шаблона */
+.template-item {
+    border-bottom: 1px solid #e0e0e0;
+    background: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.template-item:hover {
+    background: #f0f0ff;
+}
+
+.template-item.expanded {
+    background: #f8f0ff;
+}
+
+/* Название шаблона */
+.template-name {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.template-icon {
+    font-size: 20px;
+}
+
+.template-name h4 {
+    margin: 0;
+    flex: 1;
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+}
+
+.expand-icon {
+    font-size: 12px;
+    color: #999;
+    transition: transform 0.3s ease;
+}
+
+/* Обертка текста шаблона */
+.template-text-wrapper {
+    padding: 0 20px 20px 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Текст шаблона */
+.template-text {
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.template-text p {
+    margin: 0;
+    line-height: 1.6;
+    color: #555;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Кнопка копирования */
+.copy-btn {
+    width: 100%;
+    padding: 8px 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+}
+
+.copy-btn:active {
+    transform: translateY(0);
+}
+
+/* Скроллбар для списка */
+.templates-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.templates-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.templates-content::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 3px;
+}
+
+.templates-content::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .templates-bottom-left {
+        width: calc(100% - 40px);
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+    }
+
+    .templates-content {
+        max-height: 300px;
+    }
+
+    .template-name {
+        padding: 12px 15px;
+    }
+
+    .template-name h4 {
+        font-size: 14px;
+    }
+
+    .template-text p {
+        font-size: 12px;
+    }
+}
+
+/* Анимация для нового контента */
+.template-item {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

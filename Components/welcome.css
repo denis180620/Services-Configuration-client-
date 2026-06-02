@@ -1,0 +1,222 @@
+/* Основной контейнер */
+.ms3 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 800px;
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+    gap: 20px;
+}
+
+/* Блок слева сверху */
+.table-welcome {
+    width: calc(50% - 10px);
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.table-welcome:hover {
+    transform: translateY(-5px);
+}
+
+.table-welcome h2 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 24px;
+    border-bottom: 3px solid #667eea;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.table-welcome p {
+    color: #555;
+    line-height: 1.6;
+    margin: 15px 0;
+}
+
+.table-welcome ul {
+    color: #555;
+    line-height: 1.6;
+    margin: 15px 0;
+    padding-left: 20px;
+}
+
+/* Блок справа сверху - без серого выделения */
+.table-wels {
+    width: calc(50% - 10px);
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.table-wels:hover {
+    transform: translateY(-5px);
+}
+
+.table-wels h2 {
+    color: #764ba2;
+    margin-bottom: 15px;
+    font-size: 22px;
+}
+
+.table-wels h3 {
+    color: #667eea;
+    margin: 20px 0 10px 0;
+    font-size: 18px;
+}
+
+.table-wels p {
+    color: #555;
+    line-height: 1.5;
+    margin: 10px 0;
+}
+
+.table-wels ul {
+    color: #555;
+    line-height: 1.5;
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.table-wels li {
+    margin: 5px 0;
+}
+
+/* Блок внизу слева - растянут на всю ширину, но контент слева */
+.table-our {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    text-align: left;
+}
+
+.table-our:hover {
+    transform: translateY(-3px);
+}
+
+.table-our h4 {
+    color: #764ba2;
+    font-size: 22px;
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.table-our h4::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #764ba2;
+}
+
+.table-our ul {
+    color: #555;
+    line-height: 1.8;
+    font-size: 16px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.table-our li {
+    margin: 10px 0;
+    padding: 5px 0;
+}
+
+.table-our p {
+    color: #555;
+    line-height: 1.8;
+    font-size: 16px;
+    margin: 0;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .ms3 {
+        flex-direction: column;
+        padding: 10px;
+        gap: 15px;
+    }
+
+    .table-welcome,
+    .table-wels {
+        width: 100%;
+    }
+
+    .table-our ul {
+        display: block;
+    }
+}
+
+/* Добавляем анимацию для всех элементов */
+.table-welcome,
+.table-wels,
+.table-our {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Стилизация для улучшения читаемости */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+/* Делаем скролл плавным */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Добавляем красивые скроллбары */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
+}
