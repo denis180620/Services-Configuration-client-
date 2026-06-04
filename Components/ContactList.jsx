@@ -1,72 +1,47 @@
 import React, { useState, useEffect } from "react";
-import { GetContacts, DeleteContact } from "../Services/ServicesContact.jsx";
+import { DeleteContact } from "../Services/ServicesContact.jsx";
 
-function ContactList() {
-    const [contacts, setContacts] = useState([]);
-    const [loading, setLoading] = useState(true);
+function ContactList({ contacts = [], setContacts }) {
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [selectedContact, setSelectedContact] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
-    const [deletingId, setDeletingId] = useState(null); // Для отслеживания удаляемого контакта
+    const [deletingId, setDeletingId] = useState(null);
 
-    // Автоматический запрос контактов при загрузке компонента
-    useEffect(() => {
-        fetchContacts();
-    }, []);
-
-    const fetchContacts = async () => {
-        setLoading(true);
-        setError(null);
-
-        try {
-            const response = await GetContacts();
-            // Проверяем структуру ответа от сервера
-            if (response.success) {
-                setContacts(response.data || []);
-            } else {
-                setContacts(response.data || []);
-            }
-        } catch (err) {
-            setError(err.message || "Ошибка при загрузке контактов");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Обработчик удаления контакта
     const handleDeleteContact = async (contact, event) => {
-        event.stopPropagation(); // Останавливаем всплытие события, чтобы не открывался детальный просмотр
+        if (event) event.stopPropagation();
 
-        // Подтверждение удаления
         const confirmDelete = window.confirm(`Вы уверены, что хотите удалить контакт "${contact.name}"?`);
         if (!confirmDelete) return;
 
         setDeletingId(contact.id);
+        setError(null);
 
         try {
-            // Отправляем данные на сервер: id и name
             const deleteData = {
                 id: contact.id,
                 name: contact.name
             };
 
             const response = await DeleteContact(deleteData);
+            console.log('Delete response:', response);
 
-            if (response.success) {
+            if (response?.success) {
                 // Удаляем контакт из локального состояния
-                setContacts(prevContacts => prevContacts.filter(c => c.id !== contact.id));
+                if (setContacts) {
+                    setContacts(prevContacts => prevContacts.filter(c => c.id !== contact.id));
+                }
 
-                // Если удаленный контакт был выбран, закрываем детальный просмотр
                 if (selectedContact?.id === contact.id) {
                     setSelectedContact(null);
                 }
 
-                // Показываем уведомление об успехе
                 alert(`Контакт "${contact.name}" успешно удален`);
             } else {
-                throw new Error(response.error || "Ошибка при удалении");
+                throw new Error(response?.message || "Ошибка при удалении");
             }
         } catch (err) {
+            console.error('Delete error:', err);
             setError(err.message || "Ошибка при удалении контакта");
             setTimeout(() => setError(null), 3000);
         } finally {
@@ -78,12 +53,12 @@ function ContactList() {
         setSelectedContact(selectedContact?.id === contact.id ? null : contact);
     };
 
-    const copyToClipboard = (text, field) => {
+    const copyToClipboard = (text, field, event) => {
+        if (event) event.stopPropagation();
         navigator.clipboard.writeText(text);
         alert(`${field} скопирован в буфер обмена!`);
     };
 
-    // Фильтрация контактов по поиску
     const filteredContacts = contacts.filter(contact =>
         contact.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         contact.phone?.includes(searchTerm) ||
@@ -94,13 +69,9 @@ function ContactList() {
         <div className="contacts-bottom-right">
             <div className="contacts-wrapper">
                 <div className="contacts-header">
-                    <h3>Мои контакты</h3>
-                    <button onClick={fetchContacts} className="refresh-btn" disabled={loading}>
-                        {loading ? "Загрузка..." : "Обновить"}
-                    </button>
+                    <h3>Мои контакты ({contacts.length})</h3>
                 </div>
 
-                {/* Поиск контактов */}
                 <div className="search-bar">
                     <input
                         type="text"
@@ -120,12 +91,11 @@ function ContactList() {
                     ) : error ? (
                         <div className="error-state">
                             <p>⚠️ {error}</p>
-                            <button onClick={fetchContacts} className="retry-btn">Повторить</button>
                         </div>
                     ) : filteredContacts.length === 0 ? (
                         <div className="empty-state">
-                            <p> {searchTerm ? "Контакты не найдены" : "Нет сохраненных контактов"}</p>
-                            {!searchTerm && <p>Добавьте свой первый контакт</p>}
+                            <p>{searchTerm ? "Контакты не найдены" : "Нет сохраненных контактов"}</p>
+                            {!searchTerm && <p>Добавьте свой первый контакт через форму слева</p>}
                         </div>
                     ) : (
                         <div className="contacts-list">
@@ -161,16 +131,15 @@ function ContactList() {
                                                 <span className="detail-icon">📱</span>
                                                 <div className="detail-content">
                                                     <label>Телефон:</label>
-                                                    <p>{contact.phone}</p>
-                                                    <button
-                                                        className="copy-detail-btn"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            copyToClipboard(contact.phone, "Телефон");
-                                                        }}
-                                                    >
-                                                        Копировать
-                                                    </button>
+                                                    <p>{contact.phone || "—"}</p>
+                                                    {contact.phone && (
+                                                        <button
+                                                            className="copy-detail-btn"
+                                                            onClick={(e) => copyToClipboard(contact.phone, "Телефон", e)}
+                                                        >
+                                                            Копировать
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
 
@@ -182,10 +151,7 @@ function ContactList() {
                                                         <p>{contact.nikNameTelegram}</p>
                                                         <button
                                                             className="copy-detail-btn"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                copyToClipboard(contact.nikNameTelegram, "Telegram");
-                                                            }}
+                                                            onClick={(e) => copyToClipboard(contact.nikNameTelegram, "Telegram", e)}
                                                         >
                                                             Копировать
                                                         </button>
@@ -195,16 +161,13 @@ function ContactList() {
 
                                             {contact.idVk && (
                                                 <div className="detail-item">
-                                                    <span className="detail-icon"></span>
+                                                    <span className="detail-icon">🌐</span>
                                                     <div className="detail-content">
                                                         <label>VK ID:</label>
                                                         <p>{contact.idVk}</p>
                                                         <button
                                                             className="copy-detail-btn"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                copyToClipboard(contact.idVk, "VK ID");
-                                                            }}
+                                                            onClick={(e) => copyToClipboard(contact.idVk, "VK ID", e)}
                                                         >
                                                             Копировать
                                                         </button>
@@ -220,10 +183,7 @@ function ContactList() {
                                                         <p>{contact.email}</p>
                                                         <button
                                                             className="copy-detail-btn"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                copyToClipboard(contact.email, "Email");
-                                                            }}
+                                                            onClick={(e) => copyToClipboard(contact.email, "Email", e)}
                                                         >
                                                             Копировать
                                                         </button>
@@ -231,7 +191,6 @@ function ContactList() {
                                                 </div>
                                             )}
 
-                                            {/* Кнопка удаления в деталях */}
                                             <div className="detail-item delete-section">
                                                 <button
                                                     className="delete-full-btn"

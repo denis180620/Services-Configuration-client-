@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Contact.css";
 import { CreateContact } from "../Services/ServicesContact.jsx";
 
-function createContact() {
+function CreateContacts({onAddContact}) {
     const [data, setData] = useState({
         name: '',
         phone: '',
@@ -15,6 +15,7 @@ function createContact() {
     const [error, setError] = useState(null);
 
     const handleChange = (e) => {
+        e.preventDefault();
         const { name, value } = e.target;
         setData(prevState => ({
             ...prevState,
@@ -23,12 +24,22 @@ function createContact() {
     };
 
     const submitChange = async (e) => {
+        try{
         e.preventDefault();
         setLoading(true);
         setError(null);
 
-        try {
-            // Здесь должен быть ваш API запрос
+        if (!data.name.trim()) {
+            setError({ message: "Имя контакта обязательно" });
+            setLoading(false);
+            return;
+        }
+        if (!data.phone.trim()) {
+            setError({ message: "Номер телефона обязателен" });
+            setLoading(false);
+            return;
+        }
+        
             const contactData = {
                 name: data.name,
                 phone: data.phone,
@@ -36,19 +47,28 @@ function createContact() {
                 idVk: data.idVk,
                 email: data.email
             };
-
-            // Имитация отправки на сервер
+            
             const response = await CreateContact(contactData);
 
-            setResult(response);
-            // Очистка формы после успешной отправки
-            setData({
-                name: '',
-                phone: '',
-                nikNameTelegram: '',
-                idVk: '',
-                email: ''
-            });
+            if (response?.data?.success) {
+                setResult(response.message || "Контакт успешно создан!");
+
+                if (onAddContact) {
+                    onAddContact(response.data || contactData);
+                }
+
+                // Очистка формы
+                setData({
+                    name: '',
+                    phone: '',
+                    nikNameTelegram: '',
+                    idVk: '',
+                    email: ''
+                });
+
+            } else {
+                setError({ message: response?.data?.message || "Ошибка при создании контакта" });
+            }
         } catch (err) {
             setError(err);
         } finally {
@@ -122,7 +142,6 @@ function createContact() {
                                 ID ВКонтакте
                             </label>
                             <div className="input-with-icon">
-                                <span className="input-icon">🎯</span>
                                 <input
                                     type="text"
                                     className="form-input with-icon"
@@ -155,7 +174,7 @@ function createContact() {
                             <small className="form-hint">Укажите действующий email</small>
                         </div>
 
-                        <button type="submit" className="btn-submit" disabled={loading}>
+                        <button type="submit" className="btn-submit" disabled={loading} onClick={submitChange}>
                             {loading ? 'Создание контакта...' : 'Создать контакт'}
                         </button>
                     </form>
@@ -177,4 +196,4 @@ function createContact() {
     );
 }
 
-export default createContact;
+export default CreateContacts;

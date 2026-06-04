@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ListTamplate, DeleteTamplate } from "../Services/ServicesTamplate.jsx";
 
-function TemplateList() {
+function TemplateLists() {
     const [templates, setTemplates] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -172,4 +172,4 @@ function TemplateList() {
     );
 }
 
-export default TemplateList;
+export default TemplateLists;

@@ -11,7 +11,7 @@ import './App.css';
 const AppContent = () => {
     const [activeTab, setActiveTab] = useState('welcome');
     const [showAuthPage, setShowAuthPage] = useState(null);
-    const { isAuthenticated, logout } = useAuth(); 
+    const { isAuthenticated, logout, user } = useAuth();
 
     const handleShowLogin = () => {
         setShowAuthPage('login');
@@ -25,13 +25,24 @@ const AppContent = () => {
         setShowAuthPage(null);
     };
 
+    const handleLoginSuccess = () => {
+
+        setShowAuthPage(null);
+        setActiveTab('welcome');
+    };
+
     const handleLogout = async () => {
         await logout();
         setActiveTab('welcome');
         setShowAuthPage(null);
     };
 
-    // Если показываем страницу входа
+
+    if (isAuthenticated && showAuthPage) {
+        setShowAuthPage(null); 
+    }
+
+
     if (showAuthPage === 'login') {
         return (
             <div className="app">
@@ -46,6 +57,7 @@ const AppContent = () => {
                 <Login
                     onSwitchToRegister={handleShowRegister}
                     onBackToApp={handleBackToApp}
+                    onLoginSuccess={handleLoginSuccess}  // 👈 ДОБАВИТЬ
                 />
             </div>
         );
@@ -66,6 +78,7 @@ const AppContent = () => {
                 <Register
                     onSwitchToLogin={handleShowLogin}
                     onBackToApp={handleBackToApp}
+                    onRegisterSuccess={handleLoginSuccess}  // 👈 ДОБАВИТЬ
                 />
             </div>
         );
@@ -77,8 +90,8 @@ const AppContent = () => {
             return (
                 <div className="auth-required-page">
                     <div className="auth-required-card">
-                        <h2> Требуется авторизация</h2>
-                        <p>Для доступа к странице "{activeTab === 'profile' ? 'Профиль': 'Сообщения'}" необходимо войти в аккаунт</p>
+                        <h2>Требуется авторизация</h2>
+                        <p>Для доступа к странице "{activeTab === 'profile' ? 'Профиль' : 'Сообщения'}" необходимо войти в аккаунт</p>
                         <div className="auth-required-buttons">
                             <button onClick={handleShowLogin} className="btn-primary">Войти</button>
                             <button onClick={handleShowRegister} className="btn-secondary">Зарегистрироваться</button>
@@ -99,9 +112,9 @@ const AppContent = () => {
 
         switch (activeTab) {
             case 'welcome':
-               return <Welcome />;
+                return <Welcome />;
             case 'profile':
-               return <Profile />;
+                return <Profile />;
             case 'message':
                 return <MessagePage />;
             default:

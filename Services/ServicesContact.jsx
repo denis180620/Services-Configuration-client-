@@ -1,7 +1,10 @@
 import axios from 'axios';
+import { getAuthToken, refreshToken } from "../Services/ServicesAuth"; 
 import getUserId from './ServicesAuth.jsx';
-
+let currentUserId = null;
 const API_BASE_URL = 'http://localhost:5252/api';
+
+let user = localStorage.getItem('userId');
 
 // Создание axios инстанса с интерсептором для токенов
 const api = axios.create({
@@ -13,55 +16,53 @@ const api = axios.create({
 });
 
 // Интерсептор для добавления токена к запросам
-api.interceptors.request.use(
-    (config) => {
-        const token = getAuthToken();
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
+api.interceptors.request.use((config) => {
+    const token = getAuthToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
     }
-);
+    return config;
+},
+    (error) => {
+        return Promise.reject(error);
+    });
 
-// Интерсептор для обработки 401 ошибок
-api.interceptors.response.use(
-    (response) => response,
+api.interceptors.response.use((response) => {
+    return response;
+},
     async (error) => {
         const originalRequest = error.config;
-
-
-        if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/Auth/refresh')) {
+        if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
-                const response = await api.post('/Auth/refresh');
-                if (response.data?.success && response.data?.accessToken) {
-                    authToken = response.data.accessToken;
-                    originalRequest.headers.Authorization = `Bearer ${authToken}`;
-                    return api(originalRequest);
+                const response = await refreshAccessToken();
+                if (response && response.success && response.accessToken) {
+                    originalRequest.headers.Authorization = `Bearer ${response.accessToken}`;
                 }
-            } catch (refreshError) {
-                authToken = null;
-                if (window.location.pathname !== '/login') {
-                    window.location.replace('/login');
-                }
-                return Promise.reject(refreshError);
+                return api(originalRequest);
+                throw new Error('Refresh failed');
+            }
+            catch (refreshError) {
+                window.location.href = "/login";
+                return Promise.reject(error);
             }
         }
         return Promise.reject(error);
-    }
-);
+    });
 
 
 export const CreateContact = async (data) =>{
     try{
-    const response = await api.post("/Contact/create",{
-        userId: getUserId,           
-        name: data.name,   
-        phone: data.phone, 
-        nikNameTelegram: data.nikNameTelegram, 
-        idVk: data.idVk,   
-        email: data.email  
+        console.log("Данные сформированны",data);
+        const response = await api.post("/contact/create",{
+        UserId: user,           
+        Name: data.name,   
+        Phone: data.phone, 
+        NikNameTelegram: data.nikNameTelegram, 
+        IdVk: data.idVk,   
+        Email: data.email  
     });
+    console.log(response);
     return response;
     }catch(error){
         throw error.response?.data || error.message;
@@ -70,9 +71,10 @@ export const CreateContact = async (data) =>{
 
 export const GetContact = async (data) =>{
     try{
+        
         const response = await api.get("/Contact/contact", {
             name: data.name,
-            userid: getUserId
+            UserId: user
         });
         return response.data;
     }catch (error) {
@@ -82,8 +84,9 @@ export const GetContact = async (data) =>{
 
 export const GetContacts = async () =>{
     try {
+        
         const response = await api.get("/Contact/getcontacts", {
-            userid: getUserId
+            UserId: user
         });
         return response.data;
     } catch (error) {
@@ -93,9 +96,10 @@ export const GetContacts = async () =>{
 
 export const DeleteContact = async (data) =>{
     try {
-        const response = await api.get("/Contact/deletecontact", {
+        
+        const response = await api.delete("/Contact/deletecontact", {
             id: data.id,
-            userId: getUserId,
+            UserId: user,
             name: data.name, 
         });
         return response.data;
