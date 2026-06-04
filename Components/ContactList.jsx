@@ -1,12 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { DeleteContact } from "../Services/ServicesContact.jsx";
+import { DeleteContact, GetContacts  } from "../Services/ServicesContact.jsx";
 
 function ContactList({ contacts = [], setContacts }) {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedContact, setSelectedContact] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [deletingId, setDeletingId] = useState(null);
+
+    useEffect(() => {
+        const fetchContacts = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await GetContacts();
+                if (response?.success && Array.isArray(response.data)) {
+                    setContacts(response.data);
+                } else if (response?.data && Array.isArray(response.data)) {
+                    setContacts(response.data);
+                } else {
+                    throw new Error(response?.message || "Не удалось загрузить контакты");
+                }
+            } catch (err) {
+
+                setError(err.message || "Ошибка загрузки контактов");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchContacts();
+    }, [setContacts]); 
 
     const handleDeleteContact = async (contact, event) => {
         if (event) event.stopPropagation();

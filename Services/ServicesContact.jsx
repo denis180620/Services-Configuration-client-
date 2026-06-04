@@ -85,8 +85,8 @@ export const GetContact = async (data) =>{
 export const GetContacts = async () =>{
     try {
         
-        const response = await api.get("/Contact/getcontacts", {
-            UserId: user
+        const response = await api.get("/contact/getcontacts", {
+            params: { UserId: user }
         });
         return response.data;
     } catch (error) {
