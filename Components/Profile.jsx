@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import CreateContact from './Contact.jsx';
+import React, { useState, useEffect } from 'react';
+import CreateContacts from './Contact.jsx';
 import CreateTemplate from './Tamplate.jsx';
-import TemplateList from './TamplateList.jsx';
+import TemplateLists from './TamplateList.jsx';
 import ContactList from './ContactList.jsx';
 import './Profile.css'
 
@@ -13,22 +13,17 @@ function Profile() {
 
     const [contacts, setContacts] = useState([]);
 
-    // Функция для добавления нового шаблона
+
+
     const addTemplate = (newTemplate) => {
-        const templateWithId = {
-            ...newTemplate,
-            id: templates.length + 1
-        };
-        setTemplates([...templates, templateWithId]);
+        setTemplates(prev => [newTemplate, ...prev]);
+
     };
 
-    // Функция для добавления нового контакта
+
     const addContact = (newContact) => {
-        const contactWithId = {
-            ...newContact,
-            id: contacts.length + 1
-        };
-        setContacts([...contacts, contactWithId]);
+        setContacts(prev => [newContact, ...prev]);
+
     };
 
     return (
@@ -60,21 +55,23 @@ function Profile() {
                 <div className="profile-left-column">
                     <div className="form-card">
                         {activeForm === 'contact' ?
-                            <CreateContact onAddContact={addContact} /> :
+                            <CreateContacts onAddContact={addContact} /> :
                             <CreateTemplate onAddTemplate={addTemplate} />
                         }
                     </div>
                 </div>
 
                 <div className="profile-right-column">
-                    {/* Передаем данные в компоненты списков */}
-                    <TemplateList templates={templates} />
-                    <ContactList contacts={contacts} />
+
+
+                    <ContactList contacts={contacts} setContacts={setContacts} />
+                    <TemplateLists templates={templates} setTemplates={setTemplates} />
                 </div>
             </div>
         </div>
         
     );
 }
+
 
 export default Profile;

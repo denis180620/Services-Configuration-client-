@@ -1,6 +1,6 @@
 import axios from 'axios';
 import getUserId from './ServicesAuth.jsx';
-
+let currentUserId = null;
 const API_BASE_URL = 'http://localhost:5252/api';
 
 // Создание axios инстанса с интерсептором для токенов
