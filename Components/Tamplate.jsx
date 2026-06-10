@@ -85,7 +85,7 @@ function Tamplate() {
 
                     {result && (
                         <div className="alert-success">
-                            <strong>Успешно!</strong> {result}
+                            <strong>Успешно!</strong> {result.message}
                         </div>
                     )}
                 </div>

@@ -53,7 +53,6 @@ api.interceptors.response.use((response) => {
 
 export const CreateContact = async (data) =>{
     try{
-        console.log("Данные сформированны",data);
         const response = await api.post("/contact/create",{
         UserId: user,           
         Name: data.name,   
@@ -62,7 +61,6 @@ export const CreateContact = async (data) =>{
         IdVk: data.idVk,   
         Email: data.email  
     });
-    console.log(response);
     return response;
     }catch(error){
         throw error.response?.data || error.message;
@@ -98,9 +96,11 @@ export const DeleteContact = async (data) =>{
     try {
         
         const response = await api.delete("/Contact/deletecontact", {
+            params:{
             id: data.id,
             UserId: user,
             name: data.name, 
+            }
         });
         return response.data;
     } catch (error) {

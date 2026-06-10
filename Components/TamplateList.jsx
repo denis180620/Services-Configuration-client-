@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ListTamplate, DeleteTamplate } from "../Services/ServicesTamplate.jsx";
 
 function TemplateLists() {
-    const [templates, setTemplates] = useState([]);
+    const [template, setTemplates] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -47,7 +47,7 @@ function TemplateLists() {
             const deleteData = {
                 id: template.id,
                 name: template.name,
-                text: template.text
+                content: template.content
             };
 
             const response = await DeleteTamplate(deleteData);
@@ -104,14 +104,14 @@ function TemplateLists() {
                             <p>⚠️ {error}</p>
                             <button onClick={fetchTemplates} className="retry-btn">Повторить</button>
                         </div>
-                    ) : templates.length === 0 ? (
+                    ) : template.length === 0 ? (
                         <div className="empty-state">
                             <p>📭 Нет сохраненных шаблонов</p>
                             <p>Создайте свой первый шаблон</p>
                         </div>
                     ) : (
                         <div className="templates-list">
-                            {templates.map((template) => (
+                            {template.map((template) => (
                                 <div
                                     key={template.id}
                                     className={`template-item ${selectedTemplate?.id === template.id ? 'expanded' : ''}`}
@@ -140,14 +140,14 @@ function TemplateLists() {
                                     {selectedTemplate?.id === template.id && (
                                         <div className="template-text-wrapper">
                                             <div className="template-text">
-                                                <p>{template.text}</p>
+                                                <p>{template.content}</p>
                                             </div>
                                             <div className="template-buttons">
                                                 <button
                                                     className="copy-btn"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        copyToClipboard(template.text);
+                                                        copyToClipboard(template.content);
                                                     }}
                                                 >
                                                     📋 Копировать текст

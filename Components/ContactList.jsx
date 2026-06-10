@@ -9,6 +9,9 @@ function ContactList({ contacts = [], setContacts }) {
     const [deletingId, setDeletingId] = useState(null);
 
     useEffect(() => {
+        fetchContacts();
+    }, [setContacts]);
+
         const fetchContacts = async () => {
             setLoading(true);
             setError(null);
@@ -28,10 +31,6 @@ function ContactList({ contacts = [], setContacts }) {
                 setLoading(false);
             }
         };
-
-        fetchContacts();
-    }, [setContacts]); 
-
     const handleDeleteContact = async (contact, event) => {
         if (event) event.stopPropagation();
 
@@ -48,7 +47,6 @@ function ContactList({ contacts = [], setContacts }) {
             };
 
             const response = await DeleteContact(deleteData);
-            console.log('Delete response:', response);
 
             if (response?.success) {
                 // Удаляем контакт из локального состояния
@@ -94,6 +92,9 @@ function ContactList({ contacts = [], setContacts }) {
             <div className="contacts-wrapper">
                 <div className="contacts-header">
                     <h3>Мои контакты ({contacts.length})</h3>
+                    <button onClick={fetchContacts} className="refresh-btn" disabled={loading}>
+                        {loading ? "Загрузка..." : "Обновить"}
+                    </button>
                 </div>
 
                 <div className="search-bar">

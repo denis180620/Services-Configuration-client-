@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { GetMessageHistory } from "../Services/ServicesMessageHistory";
 import "./MessageHistory.css";
 
 function MessageHistory() {
     const [messages, setMessages] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
@@ -15,15 +16,17 @@ function MessageHistory() {
     }, []);
 
     const fetchMessages = async () => {
+        try{
+            console.log('fetchMessages started');
         setLoading(true);
         setError(null);
 
-        try {
-            // Имитация API запроса (замените на ваш реальный API)
+        
             const response = await GetMessageHistory();
-
-            setMessages(response.data);
+            console.log(response);
+            setMessages(response.messages || []);
         } catch (err) {
+            console.error('Ошибка в fetchMessages:', err);
             setError(err.message || "Ошибка при загрузке истории сообщений");
         } finally {
             setLoading(false);
@@ -80,9 +83,8 @@ function MessageHistory() {
     // Фильтрация сообщений по поиску и статусу
     const filteredMessages = messages.filter(message => {
         const matchesSearch =
-            message.recipientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            message.recipientPhone.includes(searchTerm) ||
-            message.messageText.toLowerCase().includes(searchTerm.toLowerCase());
+            message.recipientInfo.includes(searchTerm) ||
+            message.contentPreview.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesFilter = filter === 'all' || message.status === filter;
 
@@ -185,9 +187,9 @@ function MessageHistory() {
                                             </div>
                                         </div>
                                         <div className="message-preview-text">
-                                            {message.messageText.length > 100
-                                                ? message.messageText.substring(0, 100) + '...'
-                                                : message.messageText}
+                                            {message.contentPreview.length > 100
+                                                ? message.contentPreview.substring(0, 100) + '...'
+                                                : message.contentPreview}
                                         </div>
                                     </div>
 
@@ -198,10 +200,10 @@ function MessageHistory() {
                                                     <span className="detail-icon">📝</span>
                                                     <div className="detail-content">
                                                         <label>Полный текст сообщения:</label>
-                                                        <p className="full-message-text">{message.messageText}</p>
+                                                        <p className="full-message-text">{message.contentPreview}</p>
                                                         <button
                                                             className="copy-detail-btn"
-                                                            onClick={() => copyToClipboard(message.messageText, "Текст сообщения")}
+                                                            onClick={() => copyToClipboard(message.contentPreview, "Текст сообщения")}
                                                         >
                                                             Копировать текст
                                                         </button>
@@ -231,7 +233,7 @@ function MessageHistory() {
                                                         <span className="detail-icon">📱</span>
                                                         <div className="detail-content">
                                                             <label>Контакт:</label>
-                                                            <p>{message.recipientContact}</p>
+                                                            <p>{message.recipientInfo}</p>
                                                         </div>
                                                     </div>
 
@@ -249,7 +251,7 @@ function MessageHistory() {
                                                         <span className="detail-icon">📅</span>
                                                         <div className="detail-content">
                                                             <label>Дата отправки:</label>
-                                                            <p>{formatDate(message.sentDate)}</p>
+                                                            <p>{formatDate(message.sentAt)}</p>
                                                         </div>
                                                     </div>
 

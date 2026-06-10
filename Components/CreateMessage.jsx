@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import "./CreateMessage.css";
 import { SendMessage } from "../Services/ServicesMessageHistory";
+import { GetContacts } from "../Services/ServicesContact";
+import { ListTamplate } from "../Services/ServicesTamplate";
 
-function CreateMessage({ contacts = [], templates = [] }) {
+function CreateMessage() {
     const [messageData, setMessageData] = useState({
         selectedContact: '',
         contactName: '',
@@ -13,45 +15,87 @@ function CreateMessage({ contacts = [], templates = [] }) {
         messageText: '',
         selectedChannel: 'telegram'
     });
+    const [contacts, setContacts] = useState([]);
+    const [tamplates, setTamplate] = useState([]);
     const [searchContact, setSearchContact] = useState('');
     const [searchTemplate, setSearchTemplate] = useState('');
     const [filteredContacts, setFilteredContacts] = useState([]);
     const [filteredTemplates, setFilteredTemplates] = useState([]);
     const [showContactDropdown, setShowContactDropdown] = useState(false);
     const [showTemplateDropdown, setShowTemplateDropdown] = useState(false);
+    const [loadingData, setLoadingData] = useState(true);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
 
-    // Используем ref для отслеживания первого рендера и предотвращения бесконечного цикла
-    const isFirstRender = useRef(true);
-    const prevContactsRef = useRef(contacts);
-    const prevTemplatesRef = useRef(templates);
+    const contactDropdownRef = useRef(null);
+    const templateDropdownRef = useRef(null);
+    const contactInputRef = useRef(null);
+    const templateInputRef = useRef(null);
 
-    // Фильтрация контактов при поиске - с защитой от бесконечного цикла
+    // Закрытие dropdown при клике вне
     useEffect(() => {
-        // Пропускаем первый рендер
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
+        const handleClickOutside = (event) => {
+            if (contactDropdownRef.current &&
+                !contactDropdownRef.current.contains(event.target) &&
+                contactInputRef.current &&
+                !contactInputRef.current.contains(event.target)) {
+                setShowContactDropdown(false);
+            }
+            if (templateDropdownRef.current &&
+                !templateDropdownRef.current.contains(event.target) &&
+                templateInputRef.current &&
+                !templateInputRef.current.contains(event.target)) {
+                setShowTemplateDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Запрос контактов
+    useEffect(() => {
+        const FetchGetContacts = async () => {
+            try {
+                const response = await GetContacts();
+                if (response.data) {
+                    setContacts(response.data);
+                }
+            } catch (err) {
+                console.error(err);
+                setError("Не удалось найти контакты");
+            }
+        };
+        FetchGetContacts();
+    }, []);
+
+    // Запрос шаблонов
+    useEffect(() => {
+        const FetchGetTampalte = async () => {
+            try {
+                const response = await ListTamplate();
+                if (response.data) {
+                    setTamplate(response.data);
+                }
+            } catch (err) {
+                console.error(err);
+                setError("Не удалось загрузить шаблоны");
+            } finally {
+                setLoadingData(false);
+            }
+        };
+        FetchGetTampalte();
+    }, []);
+
+    // Фильтрация контактов
+    useEffect(() => {
+        if (!searchContact.trim()) {
+            setFilteredContacts([]);
+            setShowContactDropdown(false);
             return;
         }
 
-        // Проверяем, изменились ли контакты
-        const contactsChanged = prevContactsRef.current !== contacts;
-        prevContactsRef.current = contacts;
-
-        if (!searchContact || (!contactsChanged && filteredContacts.length === 0 && searchContact)) {
-            // Если нет поискового запроса, очищаем
-            if (!searchContact) {
-                if (filteredContacts.length !== 0) {
-                    setFilteredContacts([]);
-                    setShowContactDropdown(false);
-                }
-                return;
-            }
-        }
-
-        // Выполняем фильтрацию
         const filtered = contacts.filter(contact =>
             contact.name?.toLowerCase().includes(searchContact.toLowerCase()) ||
             contact.phone?.includes(searchContact)
@@ -59,35 +103,30 @@ function CreateMessage({ contacts = [], templates = [] }) {
 
         setFilteredContacts(filtered);
         setShowContactDropdown(filtered.length > 0);
+    }, [searchContact, contacts]);
 
-    }, [searchContact, contacts, filteredContacts.length]);
-
-    // Фильтрация шаблонов при поиске
+    // Фильтрация шаблонов
     useEffect(() => {
-        if (!searchTemplate) {
-            if (filteredTemplates.length !== 0) {
-                setFilteredTemplates([]);
-                setShowTemplateDropdown(false);
-            }
+        if (!searchTemplate.trim()) {
+            setFilteredTemplates([]);
+            setShowTemplateDropdown(false);
             return;
         }
 
-        const filtered = templates.filter(template =>
-            template.name?.toLowerCase().includes(searchTemplate.toLowerCase())
+        const filtered = tamplates.filter(tamplate =>
+            tamplate.name?.toLowerCase().includes(searchTemplate.toLowerCase())
         );
 
         setFilteredTemplates(filtered);
         setShowTemplateDropdown(filtered.length > 0);
+    }, [searchTemplate, tamplates]);
 
-    }, [searchTemplate, templates]);
-
-    // Выбор контакта
     const handleSelectContact = useCallback((contact) => {
         setMessageData(prev => ({
             ...prev,
             selectedContact: contact.id,
             contactName: contact.name,
-            contactPhone: contact.phone,
+            contactPhone: contact.phone || '',
             contactTelegram: contact.nikNameTelegram || '',
             contactVk: contact.idVk || '',
             contactEmail: contact.email || ''
@@ -96,7 +135,6 @@ function CreateMessage({ contacts = [], templates = [] }) {
         setShowContactDropdown(false);
     }, []);
 
-    // Выбор шаблона
     const handleSelectTemplate = useCallback((template) => {
         let messageText = template.text;
         if (messageData.contactName) {
@@ -111,7 +149,6 @@ function CreateMessage({ contacts = [], templates = [] }) {
         setShowTemplateDropdown(false);
     }, [messageData.contactName]);
 
-    // Очистка выбранного контакта
     const handleClearContact = useCallback(() => {
         setMessageData(prev => ({
             ...prev,
@@ -127,7 +164,6 @@ function CreateMessage({ contacts = [], templates = [] }) {
         setShowContactDropdown(false);
     }, []);
 
-    // Очистка текста сообщения
     const handleClearMessage = useCallback(() => {
         setMessageData(prev => ({
             ...prev,
@@ -135,7 +171,6 @@ function CreateMessage({ contacts = [], templates = [] }) {
         }));
     }, []);
 
-    // Выбор канала отправки
     const handleChannelChange = useCallback((channel) => {
         setMessageData(prev => ({
             ...prev,
@@ -143,7 +178,6 @@ function CreateMessage({ contacts = [], templates = [] }) {
         }));
     }, []);
 
-    // Отправка сообщения
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -212,7 +246,6 @@ function CreateMessage({ contacts = [], templates = [] }) {
         }
     };
 
-    // Доступные каналы
     const getAvailableChannels = useCallback(() => {
         const channels = [];
         if (messageData.contactPhone) channels.push({ value: 'sms', label: '📱 SMS', icon: '📱' });
@@ -221,6 +254,14 @@ function CreateMessage({ contacts = [], templates = [] }) {
         if (messageData.contactVk) channels.push({ value: 'vk', label: '🎯 VK', icon: '🎯' });
         return channels;
     }, [messageData.contactPhone, messageData.contactTelegram, messageData.contactEmail, messageData.contactVk]);
+
+    if (loadingData) {
+        return (
+            <div className="message-container">
+                <div className="loading-spinner">Загрузка данных...</div>
+            </div>
+        );
+    }
 
     return (
         <div className="message-container">
@@ -241,12 +282,18 @@ function CreateMessage({ contacts = [], templates = [] }) {
                                 <div className="search-input-wrapper">
                                     <span className="search-icon">🔍</span>
                                     <input
+                                        ref={contactInputRef}
                                         type="text"
                                         className="form-input"
                                         placeholder="Поиск контакта по имени или телефону..."
                                         value={searchContact}
-                                        onChange={(e) => setSearchContact(e.target.value)}
-                                        onFocus={() => searchContact && setShowContactDropdown(true)}
+                                        onChange={(e) => {
+                                            setSearchContact(e.target.value);
+                                            setShowContactDropdown(true);
+                                        }}
+                                        onFocus={() => {
+                                            setShowContactDropdown(true);
+                                        }}
                                     />
                                     {messageData.contactName && (
                                         <button
@@ -259,27 +306,30 @@ function CreateMessage({ contacts = [], templates = [] }) {
                                     )}
                                 </div>
 
-                                {showContactDropdown && filteredContacts.length > 0 && (
-                                    <div className="dropdown-list">
-                                        {filteredContacts.map(contact => (
-                                            <div
-                                                key={contact.id}
-                                                className="dropdown-item"
-                                                onClick={() => handleSelectContact(contact)}
-                                            >
-                                                <div className="dropdown-item-icon">👤</div>
-                                                <div className="dropdown-item-info">
-                                                    <div className="dropdown-item-name">{contact.name}</div>
-                                                    <div className="dropdown-item-detail">{contact.phone}</div>
+                                {/* Выпадающий список контактов */}
+                                {showContactDropdown && (
+                                    <div className="dropdown-overlay">
+                                        <div className="dropdown-list" ref={contactDropdownRef}>
+                                            {filteredContacts.length > 0 ? (
+                                                filteredContacts.map(contact => (
+                                                    <div
+                                                        key={contact.id}
+                                                        className="dropdown-item"
+                                                        onClick={() => handleSelectContact(contact)}
+                                                    >
+                                                        <div className="dropdown-item-icon">👤</div>
+                                                        <div className="dropdown-item-info">
+                                                            <div className="dropdown-item-name">{contact.name}</div>
+                                                            <div className="dropdown-item-detail">{contact.phone}</div>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="dropdown-empty">
+                                                    <p>❌ Контакты не найдены</p>
                                                 </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {showContactDropdown && filteredContacts.length === 0 && searchContact && (
-                                    <div className="dropdown-empty">
-                                        <p>❌ Контакты не найдены</p>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -323,38 +373,47 @@ function CreateMessage({ contacts = [], templates = [] }) {
                                 <div className="search-input-wrapper">
                                     <span className="search-icon">🔍</span>
                                     <input
+                                        ref={templateInputRef}
                                         type="text"
                                         className="form-input"
                                         placeholder="Поиск шаблона по названию..."
                                         value={searchTemplate}
-                                        onChange={(e) => setSearchTemplate(e.target.value)}
-                                        onFocus={() => searchTemplate && setShowTemplateDropdown(true)}
+                                        onChange={(e) => {
+                                            setSearchTemplate(e.target.value);
+                                            setShowTemplateDropdown(true);
+                                        }}
+                                        onFocus={() => {
+                                            setShowTemplateDropdown(true);
+                                        }}
                                     />
                                 </div>
 
-                                {showTemplateDropdown && filteredTemplates.length > 0 && (
-                                    <div className="dropdown-list">
-                                        {filteredTemplates.map(template => (
-                                            <div
-                                                key={template.id}
-                                                className="dropdown-item"
-                                                onClick={() => handleSelectTemplate(template)}
-                                            >
-                                                <div className="dropdown-item-icon">📝</div>
-                                                <div className="dropdown-item-info">
-                                                    <div className="dropdown-item-name">{template.name}</div>
-                                                    <div className="dropdown-item-preview">
-                                                        {template.text?.substring(0, 60)}...
+                                {/* Выпадающий список шаблонов */}
+                                {showTemplateDropdown && (
+                                    <div className="dropdown-overlay">
+                                        <div className="dropdown-list" ref={templateDropdownRef}>
+                                            {filteredTemplates.length > 0 ? (
+                                                filteredTemplates.map(template => (
+                                                    <div
+                                                        key={template.id}
+                                                        className="dropdown-item"
+                                                        onClick={() => handleSelectTemplate(template)}
+                                                    >
+                                                        <div className="dropdown-item-icon">📝</div>
+                                                        <div className="dropdown-item-info">
+                                                            <div className="dropdown-item-name">{template.name}</div>
+                                                            <div className="dropdown-item-preview">
+                                                                {template.text?.substring(0, 60)}...
+                                                            </div>
+                                                        </div>
                                                     </div>
+                                                ))
+                                            ) : (
+                                                <div className="dropdown-empty">
+                                                    <p>❌ Шаблоны не найдены</p>
                                                 </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {showTemplateDropdown && filteredTemplates.length === 0 && searchTemplate && (
-                                    <div className="dropdown-empty">
-                                        <p>❌ Шаблоны не найдены</p>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -408,13 +467,13 @@ function CreateMessage({ contacts = [], templates = [] }) {
 
                     {error && (
                         <div className="alert-error">
-                            <strong>Ошибка!</strong> {error}
+                            <strong>Ошибка!</strong> 
                         </div>
                     )}
 
                     {result && (
                         <div className="alert-success">
-                            <strong>Успешно!</strong> {result}
+                            <strong>Успешно!</strong> 
                         </div>
                     )}
                 </div>
