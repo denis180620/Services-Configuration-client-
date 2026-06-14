@@ -55,7 +55,6 @@ function MessageHistory() {
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case 'delivered': return '✅';
             case 'read': return '📖';
             case 'failed': return '❌';
             default: return '📨';
@@ -64,9 +63,8 @@ function MessageHistory() {
 
     const getStatusText = (status) => {
         switch (status) {
-            case 'delivered': return 'Доставлено';
-            case 'read': return 'Прочитано';
-            case 'failed': return 'Ошибка';
+            case 'Sent': return 'Доставлено';;
+            case 'Failed': return 'Ошибка';
             default: return 'Отправлено';
         }
     };
@@ -86,7 +84,7 @@ function MessageHistory() {
             message.recipientInfo.includes(searchTerm) ||
             message.contentPreview.toLowerCase().includes(searchTerm.toLowerCase());
 
-        const matchesFilter = filter === 'all' || message.status === filter;
+        const matchesFilter = filter === "all" || message.status === filter; 
 
         return matchesSearch && matchesFilter;
     });
@@ -110,20 +108,14 @@ function MessageHistory() {
                         Все
                     </button>
                     <button
-                        className={`filter-btn ${filter === 'delivered' ? 'active' : ''}`}
-                        onClick={() => setFilter('delivered')}
+                        className={`filter-btn ${filter === 'Sent' ? 'active' : ''}`}
+                        onClick={() => setFilter('Sent')}
                     >
                         Доставленные
                     </button>
                     <button
-                        className={`filter-btn ${filter === 'read' ? 'active' : ''}`}
-                        onClick={() => setFilter('read')}
-                    >
-                        Прочитанные
-                    </button>
-                    <button
-                        className={`filter-btn ${filter === 'failed' ? 'active' : ''}`}
-                        onClick={() => setFilter('failed')}
+                        className={`filter-btn ${filter === 'Failed' ? 'active' : ''}`}
+                        onClick={() => setFilter('Failed')}
                     >
                         С ошибкой
                     </button>
@@ -180,7 +172,7 @@ function MessageHistory() {
                                                 <span className="status-icon" title={getStatusText(message.status)}>
                                                     {getStatusIcon(message.status)}
                                                 </span>
-                                                <span className="message-date">{formatDate(message.sentDate)}</span>
+                                                <span className="message-date">{formatDate(message.sentAt)}</span>
                                                 <span className="expand-icon">
                                                     {selectedMessage?.id === message.id ? '▲' : '▼'}
                                                 </span>
