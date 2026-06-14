@@ -136,7 +136,7 @@ function CreateMessage() {
     }, []);
 
     const handleSelectTemplate = useCallback((template) => {
-        let messageText = template.text;
+        var messageText = template.content;
         if (messageData.contactName) {
             messageText = messageText.replace(/{name}/g, messageData.contactName);
         }
