@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { getAuthToken, refreshToken, getUserId } from "../Services/ServicesAuth";
-let user = localStorage.getItem('userId');
 const API_BASE_URL = 'http://localhost:5252/api';
 
 // Создание axios инстанса с интерсептором для токенов
@@ -51,7 +50,6 @@ api.interceptors.response.use((response) => {
 export const CreateTemplate = async (data) =>{
     try{
     const response = await api.post("/Template/create",{
-        UserId: user,
         name: data.name,
         content: data.tamplate,
         
@@ -66,7 +64,6 @@ export const CreateTemplate = async (data) =>{
 export const ListTamplate = async () =>{
     try{
         const response = await api.get("/Template/list", {
-            params: { userId: user }
         });
         return response.data;
     }catch(error){
@@ -79,7 +76,6 @@ export const DeleteTamplate = async(data) =>{
             params:{
                 name: data.name,
                 content: data.content,
-                UserId: user,
             }
         });
         return response.data;

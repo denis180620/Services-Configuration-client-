@@ -1,10 +1,7 @@
 import axios from 'axios';
 import { getAuthToken, refreshToken } from "../Services/ServicesAuth"; 
-import getUserId from './ServicesAuth.jsx';
-let currentUserId = null;
 const API_BASE_URL = 'http://localhost:5252/api';
 
-let user = localStorage.getItem('userId');
 
 // Создание axios инстанса с интерсептором для токенов
 const api = axios.create({
@@ -54,7 +51,7 @@ api.interceptors.response.use((response) => {
 export const CreateContact = async (data) =>{
     try{
         const response = await api.post("/contact/create",{
-        UserId: user,           
+          
         Name: data.name,   
         Phone: data.phone, 
         NikNameTelegram: data.nikNameTelegram, 
@@ -83,9 +80,7 @@ export const GetContact = async (data) =>{
 export const GetContacts = async () =>{
     try {
         
-        const response = await api.get("/contact/getcontacts", {
-            params: { UserId: user }
-        });
+        const response = await api.get("/contact/getcontacts");
         return response.data;
     } catch (error) {
         throw error.response?.data || error.message;
@@ -98,7 +93,6 @@ export const DeleteContact = async (data) =>{
         const response = await api.delete("/Contact/deletecontact", {
             params:{
             id: data.id,
-            UserId: user,
             name: data.name, 
             }
         });

@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { getAuthToken, refreshToken, getUserId } from "../Services/ServicesAuth";
-let user = localStorage.getItem('userId');
+import { getAuthToken, refreshToken} from "../Services/ServicesAuth";
 const API_BASE_URL = 'http://localhost:5252/api';
 
 // Создание axios инстанса с интерсептором для токенов
@@ -52,9 +51,7 @@ api.interceptors.response.use((response) => {
  */
 export const SendMessage = async (data) => {
     try {
-        const userId = getUserId();
         const response = await api.post("/Message/send", {
-            userId: userId,
             recipientInfo: data.recipientInfo,  // кому отправляем (телефон/email/telegram)
             channel: data.channel,               // канал: telegram, email, vk
             content: data.content                // текст сообщения
@@ -71,9 +68,7 @@ export const SendMessage = async (data) => {
  */
 export const RetryFailedMessage = async (messageId) => {
     try {
-        const userId = getUserId();
         const response = await api.post(`/Message/retry/${messageId}`, null, {
-            params: { userId: userId }
         });
         return response.data;
     } catch (error) {
@@ -87,9 +82,7 @@ export const RetryFailedMessage = async (messageId) => {
  */
 export const GetMessageStatus = async (messageId) => {
     try {
-        const userId = getUserId();
         const response = await api.get(`/Message/status/${messageId}`, {
-            params: { userId: userId }
         });
         return response.data;
     } catch (error) {
@@ -107,7 +100,6 @@ export const GetMessageHistory = async (status = null, limit = null) => {
         const params = {};
         if (status) params.status = status;
         if (limit) params.limit = limit;
-        if (user) params.userId = user;
 
         const response = await api.get("/Message/history", { params });
         return response.data;
@@ -122,9 +114,7 @@ export const GetMessageHistory = async (status = null, limit = null) => {
  */
 export const GetMessageStatistics = async () => {
     try {
-        const userId = getUserId();
         const response = await api.get("/Message/statistics", {
-            params: { userId: userId }
         });
         return response.data;
     } catch (error) {
@@ -138,10 +128,8 @@ export const GetMessageStatistics = async () => {
  */
 export const CleanOldMessages = async (daysToKeep = 30) => {
     try {
-        const userId = getUserId();
         const response = await api.delete("/Message/clean", {
             params: {
-                userId: userId,
                 daysToKeep: daysToKeep
             }
         });
@@ -157,9 +145,7 @@ export const CleanOldMessages = async (daysToKeep = 30) => {
  */
 export const GetFailedMessages = async () => {
     try {
-        const userId = getUserId();
         const response = await api.get("/Message/failed", {
-            params: { userId: userId }
         });
         return response.data;
     } catch (error) {
@@ -173,9 +159,7 @@ export const GetFailedMessages = async () => {
  */
 export const RetryAllFailedMessages = async () => {
     try {
-        const userId = getUserId();
         const response = await api.post("/Message/retry-all", null, {
-            params: { userId: userId }
         });
         return response.data;
     } catch (error) {
@@ -189,9 +173,7 @@ export const RetryAllFailedMessages = async () => {
  */
 export const GetMessageDetails = async (messageId) => {
     try {
-        const userId = getUserId();
         const response = await api.get(`/Message/details/${messageId}`, {
-            params: { userId: userId }
         });
         return response.data;
     } catch (error) {
